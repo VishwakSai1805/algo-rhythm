@@ -1,27 +1,32 @@
-// Web Programming Project - Algo-Rhythm (Phase 9: Final Polish & Team Details)
+// Web Programming Project - Algo-Rhythm
+// Architecture: React.js (Hooks), Web Audio API, CSS Grid
 import React, { useState, useEffect, useRef } from 'react';
 import './SortingVisualizer.css';
 import { playNote } from './SoundHelper';
 
 const SortingVisualizer = () => {
+    // ==========================================
+    // STATE MANAGEMENT
+    // ==========================================
     const [array, setArray] = useState([]);
     const [isSorting, setIsSorting] = useState(false);
     const [animationSpeed, setAnimationSpeed] = useState(50);
     const [selectedAlgo, setSelectedAlgo] = useState('bubble'); 
     const [userInput, setUserInput] = useState(''); 
 
-    // Visual Tracking States
+    // Visual Tracking States for animations
     const [comparing, setComparing] = useState([]);
     const [swapping, setSwapping] = useState([]);
     const [sorted, setSorted] = useState([]);
     const [activeCodeLine, setActiveCodeLine] = useState(-1);
 
-    // Modal State
+    // Team Modal State
     const [isModalOpen, setIsModalOpen] = useState(false);
-
     const speedRef = useRef(animationSpeed);
 
-// --- ACADEMIC DATABASE (Concise Code Version) ---
+    // ==========================================
+    // ALGORITHM DATABASE
+    // ==========================================
     const algoInfo = {
         bubble: {
             name: "Bubble Sort",
@@ -29,16 +34,7 @@ const SortingVisualizer = () => {
             timeComplexity: "O(n²)",
             spaceComplexity: "O(1)",
             color: "#00e5ff", 
-            code: `for (i = 0; i < n; i++) {
-  swapped = false;
-  for (j = 0; j < n-i-1; j++) {
-    if (arr[j] > arr[j+1]) {
-      swap(arr[j], arr[j+1]);
-      swapped = true;
-    }
-  }
-  if (!swapped) break;
-}`
+            code: `for (i = 0; i < n; i++) {\n  swapped = false;\n  for (j = 0; j < n-i-1; j++) {\n    if (arr[j] > arr[j+1]) {\n      swap(arr[j], arr[j+1]);\n      swapped = true;\n    }\n  }\n  if (!swapped) break;\n}`
         },
         selection: {
             name: "Selection Sort",
@@ -46,15 +42,7 @@ const SortingVisualizer = () => {
             timeComplexity: "O(n²)",
             spaceComplexity: "O(1)",
             color: "#ff9100", 
-            code: `for (i = 0; i < n-1; i++) {
-  min_idx = i;
-  for (j = i+1; j < n; j++) {
-    if (arr[j] < arr[min_idx])
-      min_idx = j;
-  }
-  if (min_idx !== i)
-    swap(arr[min_idx], arr[i]);
-}`
+            code: `for (i = 0; i < n-1; i++) {\n  min_idx = i;\n  for (j = i+1; j < n; j++) {\n    if (arr[j] < arr[min_idx])\n      min_idx = j;\n  }\n  if (min_idx !== i)\n    swap(arr[min_idx], arr[i]);\n}`
         },
         insertion: {
             name: "Insertion Sort",
@@ -62,14 +50,7 @@ const SortingVisualizer = () => {
             timeComplexity: "O(n²)",
             spaceComplexity: "O(1)",
             color: "#76ff03", 
-            code: `for (i = 1; i < n; i++) {
-  key = arr[i]; j = i - 1;
-  while (j >= 0 && arr[j] > key) {
-    arr[j+1] = arr[j];
-    j--;
-  }
-  arr[j+1] = key;
-}`
+            code: `for (i = 1; i < n; i++) {\n  key = arr[i]; j = i - 1;\n  while (j >= 0 && arr[j] > key) {\n    arr[j+1] = arr[j];\n    j--;\n  }\n  arr[j+1] = key;\n}`
         },
         merge: {
             name: "Merge Sort",
@@ -77,13 +58,7 @@ const SortingVisualizer = () => {
             timeComplexity: "O(n log n)",
             spaceComplexity: "O(n)",
             color: "#d500f9", 
-            code: `mergeSort(arr, l, r) {
-  if (l >= r) return;
-  mid = Math.floor((l+r)/2);
-  mergeSort(arr, l, mid);
-  mergeSort(arr, mid+1, r);
-  merge(arr, l, mid, r);
-}`
+            code: `mergeSort(arr, l, r) {\n  if (l >= r) return;\n  mid = Math.floor((l+r)/2);\n  mergeSort(arr, l, mid);\n  mergeSort(arr, mid+1, r);\n  merge(arr, l, mid, r);\n}`
         },
         quick: {
             name: "Quick Sort",
@@ -91,13 +66,7 @@ const SortingVisualizer = () => {
             timeComplexity: "O(n log n)",
             spaceComplexity: "O(log n)",
             color: "#ff1744", 
-            code: `quickSort(arr, low, high) {
-  if (low < high) {
-    pi = partition(arr, low, high);
-    quickSort(arr, low, pi-1);
-    quickSort(arr, pi+1, high);
-  }
-}`
+            code: `quickSort(arr, low, high) {\n  if (low < high) {\n    pi = partition(arr, low, high);\n    quickSort(arr, low, pi-1);\n    quickSort(arr, pi+1, high);\n  }\n}`
         },
         heap: {
             name: "Heap Sort",
@@ -105,15 +74,7 @@ const SortingVisualizer = () => {
             timeComplexity: "O(n log n)",
             spaceComplexity: "O(1)",
             color: "#2979ff", 
-            code: `heapSort(arr) {
-  n = arr.length;
-  for (i = Math.floor(n/2)-1; i >= 0; i--)
-    heapify(arr, n, i);
-  for (i = n-1; i > 0; i--) {
-    swap(arr[0], arr[i]);
-    heapify(arr, i, 0);
-  }
-}`
+            code: `heapSort(arr) {\n  n = arr.length;\n  for (i = Math.floor(n/2)-1; i >= 0; i--)\n    heapify(arr, n, i);\n  for (i = n-1; i > 0; i--) {\n    swap(arr[0], arr[i]);\n    heapify(arr, i, 0);\n  }\n}`
         },
         counting: {
             name: "Counting Sort",
@@ -121,27 +82,15 @@ const SortingVisualizer = () => {
             timeComplexity: "O(n + k)",
             spaceComplexity: "O(k)",
             color: "#fdd835", 
-            code: `countingSort(arr) {
-  max = Math.max(...arr);
-  count = Array(max+1).fill(0);
-  for (i = 0; i < arr.length; i++)
-    count[arr[i]]++;
-  z = 0;
-  for (i = 0; i <= max; i++) {
-    while (count[i] > 0) {
-      arr[z++] = i; count[i]--;
-    }
-  }
-}`
+            code: `countingSort(arr) {\n  max = Math.max(...arr);\n  count = Array(max+1).fill(0);\n  for (i = 0; i < arr.length; i++)\n    count[arr[i]]++;\n  z = 0;\n  for (i = 0; i <= max; i++) {\n    while (count[i] > 0) {\n      arr[z++] = i; count[i]--;\n    }\n  }\n}`
         }
     };
 
-
-    // --- NEW: AUTO GENERATE ON ALGO CHANGE ---
+    // ==========================================
+    // LIFECYCLE & HELPERS
+    // ==========================================
     useEffect(() => {
-        if (!isSorting) {
-            resetArray();
-        }
+        if (!isSorting) resetArray();
         // eslint-disable-next-line
     }, [selectedAlgo]);
 
@@ -157,13 +106,11 @@ const SortingVisualizer = () => {
         for (let i = 0; i < 40; i++) newArray.push(randomIntFromInterval(20, 400));
         setArray(newArray);
         setUserInput("");
-        setComparing([]);
-        setSwapping([]);
-        setSorted([]);
-        setActiveCodeLine(-1);
+        setComparing([]); setSwapping([]); setSorted([]); setActiveCodeLine(-1);
     };
 
     const generateFromInput = () => {
+        // Robust regex to split by both commas and spaces smoothly
         const customArray = userInput
             .split(/[ ,]+/)
             .filter(val => val !== '')
@@ -181,15 +128,27 @@ const SortingVisualizer = () => {
         return Math.floor(Math.pow(inverseSpeed, 1.5));
     };
 
-    // --- ALGORITHM EXECUTION (Stripped back highlighting to match new code blocks) ---
-    // Note: To keep the code clean and prevent bugs, we only highlight the active loops in this version
-const runSort = async () => {
+    function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+    function randomIntFromInterval(min, max) { return Math.floor(Math.random() * (max - min + 1) + min); }
+
+    const getBarClass = (idx) => {
+        if (swapping.includes(idx)) return 'array-bar swapping';
+        if (comparing.includes(idx)) return 'array-bar comparing';
+        if (sorted.includes(idx)) return 'array-bar sorted';
+        return 'array-bar';
+    };
+
+    // ==========================================
+    // SORTING ENGINE
+    // ==========================================
+    const runSort = async () => {
         if (isSorting) return;
         setIsSorting(true);
         setComparing([]); setSwapping([]); setSorted([]); setActiveCodeLine(-1);
         
         let currentArr = [...array];
         
+        // Execute the selected algorithm
         switch (selectedAlgo) {
             case 'bubble': await bubbleSort(currentArr); break;
             case 'selection': await selectionSort(currentArr); break;
@@ -201,14 +160,13 @@ const runSort = async () => {
             default: break;
         }
         
-        setComparing([]);
-        setSwapping([]);
-        setActiveCodeLine(-1);
+        // Cleanup and finish animations
+        setComparing([]); setSwapping([]); setActiveCodeLine(-1);
         setSorted(Array.from({length: currentArr.length}, (_, i) => i));
         
-        // --- ADD THESE 3 LINES HERE ---
+        // Play victory sound
         const tada = new Audio('/tada.mp3.mpeg'); 
-        tada.volume = 1; // Set volume to 50% so it doesn't blow out speakers
+        tada.volume = 1; 
         tada.play().catch(err => console.log("Audio blocked by browser:", err));
         
         setIsSorting(false);
@@ -220,92 +178,60 @@ const runSort = async () => {
             setActiveCodeLine(4); await sleep(getDelay() / 2);
             let swapped = false;
             for (let j = 0; j < arr.length - i - 1; j++) {
-                setActiveCodeLine(6); 
-                setComparing([j, j + 1]);
-                setActiveCodeLine(7);
-                playNote(arr[j]); 
-                await sleep(getDelay()); 
+                setActiveCodeLine(6); setComparing([j, j + 1]);
+                setActiveCodeLine(7); playNote(arr[j]); await sleep(getDelay()); 
 
                 if (arr[j] > arr[j + 1]) {
-                    setActiveCodeLine(8);
-                    setSwapping([j, j + 1]);
+                    setActiveCodeLine(8); setSwapping([j, j + 1]);
                     [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
-                    swapped = true;
-                    setArray([...arr]);
-                    await sleep(getDelay()); 
+                    swapped = true; setArray([...arr]); await sleep(getDelay()); 
                 }
                 setSwapping([]);
             }
             if (!swapped) break;
-            currentSorted.push(arr.length - 1 - i);
-            setSorted([...currentSorted]);
+            currentSorted.push(arr.length - 1 - i); setSorted([...currentSorted]);
         }
     };
 
     const selectionSort = async (arr) => {
         let currentSorted = [];
         for (let i = 0; i < arr.length; i++) {
-            setActiveCodeLine(3);
-            let minIdx = i;
+            setActiveCodeLine(3); let minIdx = i;
             setActiveCodeLine(5); await sleep(getDelay() / 2);
             
             for (let j = i + 1; j < arr.length; j++) {
-                setActiveCodeLine(6);
-                setComparing([minIdx, j]);
-                setActiveCodeLine(8);
-                playNote(arr[j]); 
-                await sleep(getDelay());
+                setActiveCodeLine(6); setComparing([minIdx, j]);
+                setActiveCodeLine(8); playNote(arr[j]); await sleep(getDelay());
 
                 if (arr[j] < arr[minIdx]) {
-                    setActiveCodeLine(9);
-                    minIdx = j;
+                    setActiveCodeLine(9); minIdx = j;
                 }
             }
-            
             setActiveCodeLine(13);
             if (minIdx !== i) {
-                setSwapping([i, minIdx]);
-                playNote(arr[minIdx]);
+                setSwapping([i, minIdx]); playNote(arr[minIdx]);
                 [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
-                setArray([...arr]);
-                await sleep(getDelay());
-                setSwapping([]);
+                setArray([...arr]); await sleep(getDelay()); setSwapping([]);
             }
-            currentSorted.push(i);
-            setSorted([...currentSorted]);
+            currentSorted.push(i); setSorted([...currentSorted]);
         }
     };
 
     const insertionSort = async (arr) => {
-        let currentSorted = [0];
-        setSorted([...currentSorted]);
-        
+        let currentSorted = [0]; setSorted([...currentSorted]);
         for (let i = 1; i < arr.length; i++) {
             setActiveCodeLine(3); await sleep(getDelay() / 2);
-            let key = arr[i];
-            let j = i - 1;
-            setActiveCodeLine(9);
-            
-            playNote(key);
-            setComparing([i]);
-            await sleep(getDelay());
+            let key = arr[i]; let j = i - 1;
+            setActiveCodeLine(9); playNote(key); setComparing([i]); await sleep(getDelay());
 
             while (j >= 0 && arr[j] > key) {
-                setSwapping([j, j + 1]);
-                setActiveCodeLine(10);
-                playNote(arr[j]);
-                arr[j + 1] = arr[j];
-                setArray([...arr]);
-                await sleep(getDelay());
+                setSwapping([j, j + 1]); setActiveCodeLine(10); playNote(arr[j]);
+                arr[j + 1] = arr[j]; setArray([...arr]); await sleep(getDelay());
                 j = j - 1;
             }
-            setActiveCodeLine(15);
-            arr[j + 1] = key;
-            setArray([...arr]);
-            setSwapping([]);
-            currentSorted.push(i);
-            setSorted([...currentSorted]);
-            await sleep(getDelay());
+            setActiveCodeLine(15); arr[j + 1] = key;
+            setArray([...arr]); setSwapping([]); currentSorted.push(i);
+            setSorted([...currentSorted]); await sleep(getDelay());
         }
     };
 
@@ -350,13 +276,11 @@ const runSort = async () => {
     };
 
     const partition = async (arr, low, high) => {
-        let pivot = arr[high];
-        let i = (low - 1);
+        let pivot = arr[high]; let i = (low - 1);
         for (let j = low; j < high; j++) {
             setComparing([j, high]); playNote(arr[j]); await sleep(getDelay()/2);
             if (arr[j] < pivot) {
-                i++;
-                setSwapping([i, j]);
+                i++; setSwapping([i, j]);
                 [arr[i], arr[j]] = [arr[j], arr[i]];
                 setArray([...arr]); await sleep(getDelay());
             }
@@ -364,8 +288,7 @@ const runSort = async () => {
         setSwapping([i + 1, high]);
         [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
         setArray([...arr]); await sleep(getDelay());
-        setComparing([]); setSwapping([]);
-        return i + 1;
+        setComparing([]); setSwapping([]); return i + 1;
     };
 
     const heapSortHelper = async (arr) => {
@@ -375,8 +298,7 @@ const runSort = async () => {
         }
         setActiveCodeLine(10);
         for (let i = n - 1; i > 0; i--) {
-            setActiveCodeLine(11);
-            setSwapping([0, i]); playNote(arr[0]); 
+            setActiveCodeLine(11); setSwapping([0, i]); playNote(arr[0]); 
             [arr[0], arr[i]] = [arr[i], arr[0]]; 
             setArray([...arr]); await sleep(getDelay());
             setActiveCodeLine(14); await heapify(arr, i, 0);
@@ -415,20 +337,16 @@ const runSort = async () => {
         setComparing([]); setSwapping([]);
     };
 
-    function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
-    function randomIntFromInterval(min, max) { return Math.floor(Math.random() * (max - min + 1) + min); }
-
-    const getBarClass = (idx) => {
-        if (swapping.includes(idx)) return 'array-bar swapping';
-        if (comparing.includes(idx)) return 'array-bar comparing';
-        if (sorted.includes(idx)) return 'array-bar sorted';
-        return 'array-bar';
-    };
-
+    // ==========================================
+    // RENDER UI
+    // ==========================================
     return (
         <div className="dashboard-container">
             <header className="app-header">
-                <h1>ALGO<span className="highlight">-RHYTHM</span></h1>
+                <div className="title-container" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                    <img src="/favicon.svg" alt="Algo-Rhythm Logo" style={{ width: '40px', height: '40px' }} />
+                    <h1>ALGO<span className="highlight">-RHYTHM</span></h1>
+                </div>
                 <div className="algo-selector">
                     <button className="btn-members" onClick={() => setIsModalOpen(true)}>Members</button>
                     <select value={selectedAlgo} onChange={(e) => setSelectedAlgo(e.target.value)} disabled={isSorting}>
@@ -447,40 +365,51 @@ const runSort = async () => {
             </header>
 
             <div className="bento-grid">
+                {/* DYNAMIC GRAPH COMPONENT */}
                 <div className="tile graph-tile">
-                    <div className="graph-wrapper">
-                        {/* DYNAMIC LEGEND */}
-                        <div className="y-axis" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', paddingRight: '10px', fontSize: '0.8rem', color: '#888' }}>
-                            <span>{array.length > 0 ? Math.max(...array) : 0}</span>
-                            <span>{array.length > 0 ? Math.floor(Math.max(...array) / 2) : 0}</span>
-                            <span>0</span>
+                    <div className="graph-wrapper" style={{ display: 'flex', height: '100%', width: '100%', flexDirection: 'column' }}>
+                        
+                        <div style={{ display: 'flex', flexGrow: 1, width: '100%', overflow: 'hidden' }}>
+                            {/* FIXED Y-AXIS WITH LABEL */}
+                            <div className="y-axis-container" style={{ display: 'flex', alignItems: 'center', marginRight: '10px' }}>
+                                <div className="y-axis-label" style={{ transform: 'rotate(-90deg)', color: '#888', fontSize: '0.9rem', letterSpacing: '2px', whiteSpace: 'nowrap', opacity: 0.8 }}>
+                                    VALUE
+                                </div>
+                                <div className="y-axis-numbers" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%', fontSize: '0.8rem', color: '#888', textAlign: 'right' }}>
+                                    <span>{array.length > 0 ? Math.max(...array) : 0}</span>
+                                    <span>{array.length > 0 ? Math.floor(Math.max(...array) / 2) : 0}</span>
+                                    <span>0</span>
+                                </div>
+                            </div>
+                            
+                            {/* BARS */}
+                            <div className="array-container" style={{ display: 'flex', alignItems: 'flex-end', height: '100%', width: '100%', gap: '1px' }}>
+                                {array.map((value, idx) => {
+                                    const maxValue = Math.max(...array);
+                                    return (
+                                        <div 
+                                            className={getBarClass(idx)} 
+                                            key={idx}
+                                            style={{
+                                                height: `${(value / maxValue) * 100}%`,
+                                                width: `${100 / array.length}%`, 
+                                                backgroundColor: (!swapping.includes(idx) && !comparing.includes(idx) && !sorted.includes(idx)) ? algoInfo[selectedAlgo].color : '',
+                                                transition: 'height 0.1s ease-in' 
+                                            }}
+                                        ></div>
+                                    );
+                                })}
+                            </div>
                         </div>
                         
-                        <div className="array-container" style={{ display: 'flex', alignItems: 'flex-end', height: '100%', width: '100%', gap: '1px' }}>
-                            {array.map((value, idx) => {
-                                const maxValue = Math.max(...array);
-                                return (
-                                    <div 
-                                        className={getBarClass(idx)} 
-                                        key={idx}
-                                        style={{
-                                            // Scale height dynamically as a percentage of the max value
-                                            height: `${(value / maxValue) * 100}%`,
-                                            // Use flex-grow or percentage for responsive widths
-                                            width: `${100 / array.length}%`, 
-                                            backgroundColor: (!swapping.includes(idx) && !comparing.includes(idx) && !sorted.includes(idx)) ? algoInfo[selectedAlgo].color : '',
-                                            // Optional: smoothly transition heights
-                                            transition: 'height 0.1s ease-in' 
-                                        }}
-                                    ></div>
-                                );
-                            })}
+                        {/* FIXED X-AXIS LABEL (Pulled up closer to the graph) */}
+                        <div className="x-axis" style={{ textAlign: 'center', color: '#888', fontSize: '0.9rem', marginTop: '10px', letterSpacing: '2px', paddingLeft: '50px' }}>
+                            INDEX
                         </div>
-                        <div className="x-axis">Index</div>
                     </div>
                 </div>
 
-                {/* RESTORED CONTROLS HEADING HERE */}
+                {/* CONTROLS MENU */}
                 <div className="tile controls-tile">
                     <h3>Controls</h3>
                     <div className="control-group">
@@ -497,21 +426,23 @@ const runSort = async () => {
                     <button className="btn-reset" onClick={resetArray} disabled={isSorting}>Generate Random</button>
                 </div>
 
+                {/* COMPLEXITY ANALYSIS */}
                 <div className="tile info-tile">
                     <h3>Complexity Analysis</h3>
                     <div className="stats-grid">
-                    <div className="stat-box">
-                        <span>Worst Time</span>
-                        <strong>{algoInfo[selectedAlgo].timeComplexity}</strong>
-                    </div>
-                    <div className="stat-box">
-                        <span>Worst Space</span>
-                        <strong>{algoInfo[selectedAlgo].spaceComplexity}</strong>
-</div>
+                        <div className="stat-box">
+                            <span>Worst Time</span>
+                            <strong>{algoInfo[selectedAlgo].timeComplexity}</strong>
+                        </div>
+                        <div className="stat-box">
+                            <span>Worst Space</span>
+                            <strong>{algoInfo[selectedAlgo].spaceComplexity}</strong>
+                        </div>
                     </div>
                     <p className="description">{algoInfo[selectedAlgo].description}</p>
                 </div>
 
+                {/* DYNAMIC CODE HIGHLIGHTER */}
                 <div className="tile code-tile">
                     <h3>Algorithm Logic</h3>
                     <pre>
@@ -526,13 +457,21 @@ const runSort = async () => {
                 </div>
             </div>
 
-
-{/* TEAM MEMBERS MODAL */}
+            {/* TEAM MEMBERS MODAL */}
             {isModalOpen && (
                 <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <button className="modal-close" onClick={() => setIsModalOpen(false)}>×</button>
                         <h2>Development Team</h2>
+
+                        <div className="member-card">
+                            <h4>Gudivada Vishwak Sai</h4>
+                            <span className="reg-no">24BYB0053</span>
+                            <p className="contribution">
+                                <strong>Role:</strong> UI/UX & Audio Integration<br/>
+                                <strong>Contributions:</strong> Designed the responsive CSS Bento Grid architecture, synchronized UI animations, and integrated the Web Audio API.
+                            </p>
+                        </div>                        
                         
                         <div className="member-card">
                             <h4>Aalap Kishore Panda</h4>
@@ -540,15 +479,6 @@ const runSort = async () => {
                             <p className="contribution">
                                 <strong>Role:</strong> Logic & State Architecture<br/>
                                 <strong>Contributions:</strong> Engineered core sorting algorithms in JavaScript and managed complex React state logic for asynchronous visual tracking.
-                            </p>
-                        </div>
-                        
-                        <div className="member-card">
-                            <h4>Gudivada Vishwak Sai</h4>
-                            <span className="reg-no">24BYB0053</span>
-                            <p className="contribution">
-                                <strong>Role:</strong> UI/UX & Audio Integration<br/>
-                                <strong>Contributions:</strong> Designed the responsive CSS Bento Grid architecture, synchronized UI animations, and integrated the Web Audio API.
                             </p>
                         </div>
 
