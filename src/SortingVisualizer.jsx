@@ -516,15 +516,7 @@ const runSort = async () => {
                         <button className="modal-close" onClick={() => setIsModalOpen(false)}>×</button>
                         <h2>Development Team</h2>
                         
-                        <div className="member-card">
-                            <h4>Aalap Kishore Panda</h4>
-                            <span className="reg-no">24BYB0191</span>
-                            <p className="contribution">
-                                <strong>Role:</strong> Logic & State Architecture<br/>
-                                <strong>Contributions:</strong> Engineered core sorting algorithms in JavaScript and managed complex React state logic for asynchronous visual tracking.
-                            </p>
-                        </div>
-                        
+                        {/* Vishwak's Card is now First */}
                         <div className="member-card">
                             <h4>Gudivada Vishwak Sai</h4>
                             <span className="reg-no">24BYB0053</span>
@@ -534,6 +526,16 @@ const runSort = async () => {
                             </p>
                         </div>
 
+                        {/* Aalap's Card is now Second */}
+                        <div className="member-card">
+                            <h4>Aalap Kishore Panda</h4>
+                            <span className="reg-no">24BYB0191</span>
+                            <p className="contribution">
+                                <strong>Role:</strong> Logic & State Architecture<br/>
+                                <strong>Contributions:</strong> Engineered core sorting algorithms in JavaScript and managed complex React state logic for asynchronous visual tracking.
+                            </p>
+                        </div>
+                        
                     </div>
                 </div>
             )}
