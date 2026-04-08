@@ -164,7 +164,12 @@ const SortingVisualizer = () => {
     };
 
     const generateFromInput = () => {
-        const customArray = userInput.split(',').map(num => parseInt(num.trim(), 10)).filter(num => !isNaN(num));
+        const customArray = userInput
+            .split(/[ ,]+/)
+            .filter(val => val !== '')
+            .map(num => parseInt(num.trim(), 10))
+            .filter(num => !isNaN(num));
+
         if (customArray.length > 0) {
             setArray(customArray);
             setComparing([]); setSwapping([]); setSorted([]); setActiveCodeLine(-1);
@@ -444,19 +449,32 @@ const runSort = async () => {
             <div className="bento-grid">
                 <div className="tile graph-tile">
                     <div className="graph-wrapper">
-                        <div className="y-axis">Value</div>
-                        <div className="array-container">
-                            {array.map((value, idx) => (
-                                <div 
-                                    className={getBarClass(idx)} 
-                                    key={idx}
-                                    style={{
-                                        height: `${value}px`,
-                                        width: `${900 / array.length}px`,
-                                        backgroundColor: (!swapping.includes(idx) && !comparing.includes(idx) && !sorted.includes(idx)) ? algoInfo[selectedAlgo].color : ''
-                                    }}
-                                ></div>
-                            ))}
+                        {/* DYNAMIC LEGEND */}
+                        <div className="y-axis" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', paddingRight: '10px', fontSize: '0.8rem', color: '#888' }}>
+                            <span>{array.length > 0 ? Math.max(...array) : 0}</span>
+                            <span>{array.length > 0 ? Math.floor(Math.max(...array) / 2) : 0}</span>
+                            <span>0</span>
+                        </div>
+                        
+                        <div className="array-container" style={{ display: 'flex', alignItems: 'flex-end', height: '100%', width: '100%', gap: '1px' }}>
+                            {array.map((value, idx) => {
+                                const maxValue = Math.max(...array);
+                                return (
+                                    <div 
+                                        className={getBarClass(idx)} 
+                                        key={idx}
+                                        style={{
+                                            // Scale height dynamically as a percentage of the max value
+                                            height: `${(value / maxValue) * 100}%`,
+                                            // Use flex-grow or percentage for responsive widths
+                                            width: `${100 / array.length}%`, 
+                                            backgroundColor: (!swapping.includes(idx) && !comparing.includes(idx) && !sorted.includes(idx)) ? algoInfo[selectedAlgo].color : '',
+                                            // Optional: smoothly transition heights
+                                            transition: 'height 0.1s ease-in' 
+                                        }}
+                                    ></div>
+                                );
+                            })}
                         </div>
                         <div className="x-axis">Index</div>
                     </div>
